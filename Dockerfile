@@ -1,19 +1,15 @@
-# Use Python base image
 FROM python:3.10-slim
 
-# Set workdir
 WORKDIR /app
 
-# Copy backend code
-COPY backend/ ./backend/
+COPY backend/requirements.txt ./requirements.txt
 
-# Install dependencies
-RUN pip install --no-cache-dir -r backend/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port
-EXPOSE 8000
+COPY . .
 
-# Correct CMD syntax (JSON array - all strings)
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENV PORT=8080
 
+EXPOSE 8080
 
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", 8080]
