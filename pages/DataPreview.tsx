@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Search, FileSpreadsheet, Loader2, AlertCircle, RefreshCw, ServerOff, Database } from 'lucide-react';
 
 // Configuration for API endpoint - Deployed on Cloud Run
-const API_BASE_URL = 'https://fast-api-65494201008.europe-west1.run.app';
+const API_BASE_URL = 'https://fast-api-65494201008.us-central1.run.app';
 
 type TabType = 'nielsen' | 'promotion' | 'promotionSpend' | 'fi' | 'cogs' | 'listPrice' | 'hierarchy' | 'dispute' | 'claim';
 
