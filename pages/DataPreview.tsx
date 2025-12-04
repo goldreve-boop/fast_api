@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Search, FileSpreadsheet, Loader2, AlertCircle, RefreshCw, ServerOff, Database } from 'lucide-react';
 
-// Configuration for API endpoint - Assumes backend runs on port 8080 (Cloud Run / Docker default)
-const API_BASE_URL = 'http://localhost:8080';
+// Configuration for API endpoint - Deployed on Cloud Run
+const API_BASE_URL = 'https://fast-api-65494201008.europe-west1.run.app';
 
 type TabType = 'nielsen' | 'promotion' | 'promotionSpend' | 'fi' | 'cogs' | 'listPrice' | 'hierarchy' | 'dispute' | 'claim';
 
@@ -36,21 +36,24 @@ const DataPreview: React.FC = () => {
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        // We use the test-db endpoint which returns detailed status
+        // We use the health endpoint which returns detailed status
         const res = await fetch(`${API_BASE_URL}/health`);
         if (res.ok) {
            const json = await res.json();
-           if (json.db_connected) {
+           // Some backends return {status: "ok"}, others might return detailed db_connected.
+           // Check for either structure.
+           if (json.status === "ok" || json.db_connected) {
                setDbStatus('connected');
            } else {
                setDbStatus('db_error');
-               console.warn("Backend running but DB not connected.");
+               console.warn("Backend running but DB might not be connected:", json);
            }
         } else {
            setDbStatus('server_error');
         }
       } catch (e) {
         setDbStatus('offline');
+        console.error("Health check failed:", e);
       }
     };
     checkBackend();
@@ -78,7 +81,8 @@ const DataPreview: React.FC = () => {
         }
         
         const result = await response.json();
-        setData(Array.isArray(result) ? result : []);
+        // Handle responses that might be wrapped in { data: [...] } or just [...]
+        setData(Array.isArray(result) ? result : (result.data ? result.data : []));
       } catch (err: any) {
         console.error("Failed to fetch data:", err);
         // User friendly error mapping
@@ -208,8 +212,8 @@ const DataPreview: React.FC = () => {
                 <div className="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 max-w-md">
                     <p className="font-semibold mb-2">Troubleshooting Steps:</p>
                     <ol className="list-decimal list-inside space-y-1 text-left">
-                        <li>Ensure the backend is running: <code>uvicorn backend.main:app --host 0.0.0.0 --port 8080</code></li>
-                        <li>Verify that port 8080 is accessible.</li>
+                        <li>Ensure the backend is running at <a href={API_BASE_URL} target="_blank" rel="noreferrer" className="text-blue-600 underline">{API_BASE_URL}</a></li>
+                        <li>Verify that the service allows CORS requests.</li>
                     </ol>
                 </div>
             ) : (
