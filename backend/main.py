@@ -1,1 +1,7 @@
-�jh��2�)���Z�)܊����했 �x����{^��bl
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "FastAPI is running on Cloud Run"}
