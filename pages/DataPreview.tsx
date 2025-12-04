@@ -37,14 +37,14 @@ const DataPreview: React.FC = () => {
     const checkBackend = async () => {
       try {
         // We use the test-db endpoint which returns detailed status
-        const res = await fetch(`${API_BASE_URL}/api/test-db`);
+        const res = await fetch(`${API_BASE_URL}/health`);
         if (res.ok) {
            const json = await res.json();
-           if (json.success) {
+           if (json.db_connected) {
                setDbStatus('connected');
            } else {
                setDbStatus('db_error');
-               console.warn("DB Connection Error:", json.message);
+               console.warn("Backend running but DB not connected.");
            }
         } else {
            setDbStatus('server_error');
@@ -83,7 +83,7 @@ const DataPreview: React.FC = () => {
         console.error("Failed to fetch data:", err);
         // User friendly error mapping
         if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
-             setError("Backend Server (Port 8080) is unreachable.");
+             setError("Cannot connect to backend server at " + API_BASE_URL);
              setDbStatus('offline');
         } else {
              setError(err.message || "Unknown error occurred.");
@@ -126,12 +126,12 @@ const DataPreview: React.FC = () => {
              <p className="text-slate-500">Inspect table data directly from MySQL Database.</p>
              {dbStatus === 'offline' && (
                  <span className="flex items-center gap-1 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">
-                    <ServerOff className="w-3 h-3"/> Backend Offline (Port 8080)
+                    <ServerOff className="w-3 h-3"/> Backend Offline
                  </span>
              )}
              {dbStatus === 'db_error' && (
                  <span className="flex items-center gap-1 text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">
-                    <Database className="w-3 h-3"/> DB Disconnected (Port 3306)
+                    <Database className="w-3 h-3"/> DB Disconnected
                  </span>
              )}
              {dbStatus === 'connected' && (
@@ -204,18 +204,18 @@ const DataPreview: React.FC = () => {
             <h3 className="text-lg font-medium text-slate-900 mb-1">Connection Error</h3>
             <p className="text-slate-500 max-w-md mb-2">{error}</p>
             
-            {error.includes('Backend Server') ? (
+            {error.includes('Cannot connect') ? (
                 <div className="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 max-w-md">
                     <p className="font-semibold mb-2">Troubleshooting Steps:</p>
                     <ol className="list-decimal list-inside space-y-1 text-left">
                         <li>Ensure the backend is running: <code>uvicorn backend.main:app --host 0.0.0.0 --port 8080</code></li>
-                        <li>Check if port 8080 is accessible.</li>
+                        <li>Verify that port 8080 is accessible.</li>
                     </ol>
                 </div>
             ) : (
                 <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4 max-w-md">
-                     <p className="font-semibold">Cloud SQL (Port 3306) Error</p>
-                     <p>Check "Authorized Networks" in Google Cloud Console.</p>
+                     <p className="font-semibold">Database Error</p>
+                     <p>The backend is reachable but returned an error. It might be missing tables or credentials.</p>
                 </div>
             )}
             
