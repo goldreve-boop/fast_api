@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Search, FileSpreadsheet, Loader2, AlertCircle, RefreshCw, ServerOff, Database } from 'lucide-react';
 
-// Configuration for API endpoint - Assumes backend runs on port 8000
-const API_BASE_URL = 'http://localhost:8000';
+// Configuration for API endpoint - Assumes backend runs on port 8080 (Cloud Run / Docker default)
+const API_BASE_URL = 'http://localhost:8080';
 
 type TabType = 'nielsen' | 'promotion' | 'promotionSpend' | 'fi' | 'cogs' | 'listPrice' | 'hierarchy' | 'dispute' | 'claim';
 
@@ -82,7 +83,7 @@ const DataPreview: React.FC = () => {
         console.error("Failed to fetch data:", err);
         // User friendly error mapping
         if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
-             setError("Backend Server (Port 8000) is unreachable.");
+             setError("Backend Server (Port 8080) is unreachable.");
              setDbStatus('offline');
         } else {
              setError(err.message || "Unknown error occurred.");
@@ -125,7 +126,7 @@ const DataPreview: React.FC = () => {
              <p className="text-slate-500">Inspect table data directly from MySQL Database.</p>
              {dbStatus === 'offline' && (
                  <span className="flex items-center gap-1 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">
-                    <ServerOff className="w-3 h-3"/> Backend Offline (Port 8000)
+                    <ServerOff className="w-3 h-3"/> Backend Offline (Port 8080)
                  </span>
              )}
              {dbStatus === 'db_error' && (
@@ -207,8 +208,8 @@ const DataPreview: React.FC = () => {
                 <div className="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 max-w-md">
                     <p className="font-semibold mb-2">Troubleshooting Steps:</p>
                     <ol className="list-decimal list-inside space-y-1 text-left">
-                        <li>Ensure the backend is running: <code>uvicorn backend.main:app --reload</code></li>
-                        <li>Check if port 8000 is occupied.</li>
+                        <li>Ensure the backend is running: <code>uvicorn backend.main:app --host 0.0.0.0 --port 8080</code></li>
+                        <li>Check if port 8080 is accessible.</li>
                     </ol>
                 </div>
             ) : (
