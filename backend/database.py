@@ -19,5 +19,4 @@ async def get_connection():
     global POOL
     if POOL is None:
         raise Exception("DB Pool has not been initialized")
-    return POOL.acquire()
-
+    return await POOL.acquire()
