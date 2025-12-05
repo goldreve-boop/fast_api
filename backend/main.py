@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.database import init_db_pool, get_connection
+from backend.routers import nielsen
+
+app.include_router(nielsen.router)
+
 
 app = FastAPI()
 
