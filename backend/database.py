@@ -1,5 +1,4 @@
 import aiomysql
-from fastapi import FastAPI
 
 POOL = None
 
@@ -16,8 +15,9 @@ async def init_db_pool():
         autocommit=True,
     )
 
-async def get_conn():
+async def get_connection():
     global POOL
     if POOL is None:
         raise Exception("DB Pool has not been initialized")
-    return POOL
+    return POOL.acquire()
+
