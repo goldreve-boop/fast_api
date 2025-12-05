@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Search, FileSpreadsheet, Loader2, AlertCircle, RefreshCw, ServerOff, Database } from 'lucide-react';
@@ -41,7 +40,6 @@ const DataPreview: React.FC = () => {
         if (res.ok) {
            const json = await res.json();
            // Some backends return {status: "ok"}, others might return detailed db_connected.
-           // Check for either structure.
            if (json.status === "ok" || json.db_connected) {
                setDbStatus('connected');
            } else {
