@@ -1,24 +1,24 @@
 FROM python:3.11-slim
 
-# 앱 폴더 생성
+# 컨테이너 내 작업 디렉토리
 WORKDIR /app
 
-# backend 폴더 아래의 requirements.txt 복사
-COPY backend/requirements.txt .
-
-# 패키지 설치
+# requirements 설치
+COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# backend 전체를 /app/backend 로 복사
+# backend 전체를 복사 (가장 중요)
 COPY backend /app/backend
 
-# FastAPI가 실행될 위치로 이동
+# backend를 PYTHONPATH에 추가
+ENV PYTHONPATH=/app
+
+# FastAPI 실행 위치 설정
 WORKDIR /app/backend
 
-ENV PYTHONUNBUFFERED=1
-
-# Cloud Run PORT(=8080)에서 listen
+# Cloud Run 포트 설정
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+
 
 
 
