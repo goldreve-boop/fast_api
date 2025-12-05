@@ -7,8 +7,11 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY fast_api/backend ./backend
-COPY fast_api/requirements.txt ./requirements.txt
+# backend 파일 전체 복사
+COPY backend ./backend
+
+# requirements.txt는 backend 폴더 안에 존재함
+COPY backend/requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 
