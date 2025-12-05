@@ -1,6 +1,4 @@
 fastapi
-uvicorn
-pydantic
+uvicorn[standard]
 aiomysql
-pymysql
-cryptography
+
